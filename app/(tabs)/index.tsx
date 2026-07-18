@@ -11,6 +11,7 @@ import { icons } from "@/constants/icons";
 import images from "@/constants/images";
 import "@/global.css";
 import { formatCurrency } from "@/lib/utils";
+import { useUser } from "@clerk/expo";
 import dayjs from "dayjs";
 import { styled } from "nativewind";
 import { useState } from "react";
@@ -23,6 +24,8 @@ export default function App() {
     string | null
   >(null);
 
+  const { user } = useUser();
+
   return (
     <SafeAreaView className="flex-1 bg-background p-5">
       <StatusBar barStyle="dark-content" />
@@ -33,8 +36,15 @@ export default function App() {
             {/* Header Section */}
             <View className="home-header">
               <View className="home-user">
-                <Image source={images.avatar} className="home-avatar" />
-                <Text className="home-user-name">{HOME_USER.name}</Text>
+                <Image
+                  source={
+                    user?.imageUrl ? { uri: user.imageUrl } : images.avatar
+                  }
+                  className="home-avatar"
+                />
+                <Text className="home-user-name">
+                  {user?.fullName || HOME_USER.name}
+                </Text>
               </View>
 
               <View className="rounded-full size-12 overflow-hidden p-2 border border-gray-200 flex items-center justify-center">
