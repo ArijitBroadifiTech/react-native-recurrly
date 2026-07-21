@@ -1,3 +1,4 @@
+import type { ReactElement } from "react";
 import type { ImageSourcePropType } from "react-native";
 
 declare global {
@@ -14,7 +15,7 @@ declare global {
 
   interface Subscription {
     id: string;
-    icon: ImageSourcePropType;
+    icon: ImageSourcePropType | ReactElement;
     name: string;
     plan?: string;
     category?: string;
@@ -38,7 +39,7 @@ declare global {
 
   interface UpcomingSubscription {
     id: string;
-    icon: ImageSourcePropType;
+    icon: ImageSourcePropType | ReactElement;
     name: string;
     price: number;
     currency?: string;

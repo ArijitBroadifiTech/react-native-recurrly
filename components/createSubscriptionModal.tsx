@@ -1,8 +1,8 @@
-import { icons } from "@/constants/icons";
 import { posthog } from "@/src/config/posthog";
+import { FontAwesome5 } from "@expo/vector-icons";
 import clsx from "clsx";
 import dayjs from "dayjs";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   KeyboardAvoidingView,
   Modal,
@@ -42,6 +42,46 @@ const CATEGORY_COLORS: Record<Category, string> = {
   Design: "#f5c542",
   Productivity: "#95e1d3",
   Other: "#d4d4d4",
+};
+
+// Map common subscription names to FontAwesome5 brand icon names
+const BRAND_ICON_MAP: Record<string, string> = {
+  spotify: "spotify",
+  netflix: "netflix",
+  youtube: "youtube",
+  github: "github",
+  gitlab: "gitlab",
+  apple: "apple",
+  google: "google",
+  amazon: "amazon",
+  discord: "discord",
+  slack: "slack",
+  dropbox: "dropbox",
+  twitter: "twitter",
+  facebook: "facebook",
+  instagram: "instagram",
+  linkedin: "linkedin",
+  microsoft: "microsoft",
+  adobe: "adobe",
+  twitch: "twitch",
+  patreon: "patreon",
+  paypal: "paypal",
+};
+
+const getSubscriptionIcon = (name: string, color: string) => {
+  const key = name.trim().toLowerCase();
+  // Try exact match first, then check if name contains a known brand
+  const brandKey =
+    BRAND_ICON_MAP[key] ??
+    Object.keys(BRAND_ICON_MAP).find((brand) => key.includes(brand));
+  return (
+    <FontAwesome5
+      name={brandKey ?? "layer-group"}
+      size={48}
+      color={color}
+      brand={!!brandKey}
+    />
+  );
 };
 
 const CreateSubscriptionModal = ({
@@ -91,7 +131,7 @@ const CreateSubscriptionModal = ({
       status: "active",
       startDate: now.toISOString(),
       renewalDate: renewalDate.toISOString(),
-      icon: icons.plus,
+      icon: getSubscriptionIcon(name.trim(), "#000000"),
       billing: frequency,
       color: CATEGORY_COLORS[category],
     };
@@ -118,7 +158,7 @@ const CreateSubscriptionModal = ({
     <Modal
       visible={visible}
       transparent
-      animationType="fade"
+      animationType="slide"
       onRequestClose={handleClose}
     >
       <KeyboardAvoidingView

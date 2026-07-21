@@ -4,8 +4,8 @@ import {
   formatSubscriptionDateTime,
 } from "@/lib/utils";
 import clsx from "clsx";
-import React from "react";
-import { Image, Pressable, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
+import { RenderIcon } from "./renderIcon";
 
 const SubscriptionCard = ({
   name,
@@ -31,7 +31,7 @@ const SubscriptionCard = ({
     >
       <View className="sub-head">
         <View className="sub-main">
-          <Image source={icon} className="sub-icon" />
+          <RenderIcon icon={icon} className="sub-icon" />
           <View className="sub-copy">
             <Text numberOfLines={1} className="sub-title">
               {name}

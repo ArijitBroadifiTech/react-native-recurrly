@@ -159,7 +159,11 @@
   }
 
   .sub-icon {
-    @apply size-16 rounded-lg;
+    @apply size-15 flex justify-center items-center;
+  }
+
+  .sub-image-icon {
+    @apply size-15;
   }
 
   .sub-copy {

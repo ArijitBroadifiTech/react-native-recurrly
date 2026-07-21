@@ -1,6 +1,17 @@
 import { formatCurrency } from "@/lib/utils";
-import React from "react";
+import React, { isValidElement } from "react";
 import { Image, Text, View } from "react-native";
+import { RenderIcon } from "./renderIcon";
+
+const renderIcon = (
+  icon: UpcomingSubscriptionCardProps["icon"],
+  className: string,
+) =>
+  isValidElement(icon) ? (
+    <View>{icon}</View>
+  ) : (
+    <Image source={icon as any} className={className} />
+  );
 
 const UpcomingSubscriptionCard = ({
   name,
@@ -12,7 +23,8 @@ const UpcomingSubscriptionCard = ({
   return (
     <View className="upcoming-card">
       <View className="upcoming-row">
-        <Image source={icon} className="upcoming-icon" />
+        {/* {renderIcon(icon, "upcoming-icon")} */}
+        <RenderIcon icon={icon} className="sub-icon" />
 
         <View>
           <Text className="upcoming-price">
