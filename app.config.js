@@ -4,14 +4,16 @@ export default {
     slug: "recurrly",
     version: "1.0.0",
     orientation: "portrait",
-    icon: "./assets/images/icon.png",
+    icon: "./assets/icons/logo.png",
     scheme: "reactnativerecurrly",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
     ios: {
+      bundleIdentifier: "com.arijit.reactnativerecurrly",
       supportsTablet: true,
     },
     android: {
+      package: "com.arijit.reactnativerecurrly",
       adaptiveIcon: {
         backgroundColor: "#E6F4FE",
         foregroundImage: "./assets/images/android-icon-foreground.png",
@@ -30,7 +32,7 @@ export default {
       [
         "expo-splash-screen",
         {
-          image: "./assets/images/splash-icon.png",
+          image: "./assets/images/splash-pattern.png",
           imageWidth: 200,
           resizeMode: "contain",
           backgroundColor: "#ffffff",
@@ -62,6 +64,9 @@ export default {
     extra: {
       posthogProjectToken: process.env.POSTHOG_PROJECT_TOKEN,
       posthogHost: process.env.POSTHOG_HOST || "https://us.i.posthog.com",
+      eas: {
+        projectId: "b1526bf1-c8e8-4407-aa06-07d886154a96",
+      },
     },
   },
 };
