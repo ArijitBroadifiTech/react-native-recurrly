@@ -355,11 +355,11 @@
   }
 
   .modal-overlay {
-    @apply flex-1 bg-black/50 h-full;
+    @apply flex-1 bg-black/50;
   }
 
   .modal-container {
-    @apply h-full rounded-t-3xl bg-background;
+    @apply mt-auto max-h-[85%] rounded-t-3xl bg-background;
   }
 
   .modal-header {

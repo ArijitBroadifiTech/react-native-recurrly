@@ -20,6 +20,7 @@ export default {
       },
       edgeToEdgeEnabled: true,
       predictiveBackGestureEnabled: false,
+      softwareKeyboardLayoutMode: "resize",
     },
     web: {
       output: "static",

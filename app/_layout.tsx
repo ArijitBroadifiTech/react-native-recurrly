@@ -11,6 +11,7 @@ import {
 } from "expo-router";
 import { PostHogProvider } from "posthog-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import { posthog } from "../src/config/posthog";
 
 SplashScreen.preventAutoHideAsync();
@@ -84,7 +85,9 @@ export default function RootLayout() {
           maxElementsCaptured: 20,
         }}
       >
-        <RootLayoutContent />
+        <KeyboardProvider>
+          <RootLayoutContent />
+        </KeyboardProvider>
       </PostHogProvider>
     </ClerkProvider>
   );
