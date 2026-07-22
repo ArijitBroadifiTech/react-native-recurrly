@@ -17,8 +17,6 @@ export default {
       adaptiveIcon: {
         backgroundColor: "#FFFFFF",
         foregroundImage: "./assets/icons/logo.png",
-        backgroundImage: "./assets/icons/logo.png",
-        monochromeImage: "./assets/icons/logo.png",
       },
       edgeToEdgeEnabled: true,
       predictiveBackGestureEnabled: false,
