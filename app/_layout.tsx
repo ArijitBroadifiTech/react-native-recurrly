@@ -1,11 +1,18 @@
+import CustomSplashScreen from "@/components/customSplashScreen";
 import "@/global.css";
 import { ClerkProvider, useAuth } from "@clerk/expo";
 import { tokenCache } from "@clerk/expo/token-cache";
 import { useFonts } from "expo-font";
-import { SplashScreen, Stack, usePathname, useGlobalSearchParams } from "expo-router";
-import { useEffect, useRef } from "react";
+import {
+  SplashScreen,
+  Stack,
+  useGlobalSearchParams,
+  usePathname,
+} from "expo-router";
 import { PostHogProvider } from "posthog-react-native";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { posthog } from "../src/config/posthog";
+
 SplashScreen.preventAutoHideAsync();
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
@@ -19,6 +26,7 @@ function RootLayoutContent() {
   const pathname = usePathname();
   const params = useGlobalSearchParams();
   const previousPathname = useRef<string | undefined>(undefined);
+  const [showCustomSplash, setShowCustomSplash] = useState(true);
 
   useEffect(() => {
     if (previousPathname.current !== pathname) {
@@ -38,15 +46,28 @@ function RootLayoutContent() {
     "sans-extrabold": require("../assets/fonts/PlusJakartaSans-ExtraBold.ttf"),
     "sans-light": require("../assets/fonts/PlusJakartaSans-Light.ttf"),
   });
+
+  const appIsReady = fontsLoaded && authLoaded;
+
+  // Hide the NATIVE splash as soon as app data is ready —
+  // our custom JS splash takes over visually from here
   useEffect(() => {
-    // Hide splash only when both fonts and auth are loaded
-    if (fontsLoaded && authLoaded) {
+    if (appIsReady) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded, authLoaded]);
+  }, [appIsReady]);
 
-  // Don't render app until both are ready
-  if (!fontsLoaded || !authLoaded) return null;
+  const handleCustomSplashFinish = useCallback(() => {
+    setShowCustomSplash(false);
+  }, []);
+
+  // Don't render anything until fonts + auth are ready
+  if (!appIsReady) return null;
+
+  // Show custom splash on top of the app briefly after native splash hides
+  if (showCustomSplash) {
+    return <CustomSplashScreen onFinish={handleCustomSplashFinish} />;
+  }
 
   return <Stack screenOptions={{ headerShown: false }} />;
 }

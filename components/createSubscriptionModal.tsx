@@ -162,8 +162,8 @@ const CreateSubscriptionModal = ({
       onRequestClose={handleClose}
     >
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1"
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        className="flex-1 h-full"
         keyboardVerticalOffset={0}
       >
         <Pressable className="modal-overlay" onPress={handleClose}>
@@ -180,6 +180,7 @@ const CreateSubscriptionModal = ({
             <ScrollView
               className="p-5"
               showsHorizontalScrollIndicator={false}
+              automaticallyAdjustKeyboardInsets={true}
               keyboardShouldPersistTaps="handled"
               contentContainerStyle={{ gap: 20, paddingBottom: 20 }}
             >
