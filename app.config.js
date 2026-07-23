@@ -14,6 +14,7 @@ export default {
     },
     android: {
       package: "com.arijit.reactnativerecurrly",
+      permissions: ["android.permission.POST_NOTIFICATIONS"],
       adaptiveIcon: {
         backgroundColor: "#FFFFFF",
         foregroundImage: "./assets/icons/logo.png",
@@ -32,11 +33,21 @@ export default {
         "expo-splash-screen",
         {
           image: "./assets/images/splash-pattern.png",
-          resizeMode: "cover",
+          resizeMode: "contain",
           backgroundColor: "#ffffff",
           dark: {
             backgroundColor: "#000000",
           },
+        },
+      ],
+      [
+        "expo-notifications",
+        {
+          icon: "./assets/icons/notification_icon.png",
+          color: "#ffffff",
+          defaultChannel: "default",
+          sounds: ["./assets/sound/notification_sound.wav"],
+          enableBackgroundRemoteNotifications: false,
         },
       ],
       [

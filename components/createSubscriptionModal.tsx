@@ -2,10 +2,12 @@ import { posthog } from "@/src/config/posthog";
 import { FontAwesome5 } from "@expo/vector-icons";
 import clsx from "clsx";
 import dayjs from "dayjs";
+import { styled } from "nativewind";
 import { useState } from "react";
 import { Modal, Pressable, Text, TextInput, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
+const SafeAreaView = styled(RNSafeAreaView);
 
 interface CreateSubscriptionModalProps {
   visible: boolean;
@@ -148,13 +150,13 @@ const CreateSubscriptionModal = ({
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background p-5">
-      <Modal
-        visible={visible}
-        transparent
-        animationType="slide"
-        onRequestClose={handleClose}
-      >
+    <Modal
+      visible={visible}
+      transparent
+      animationType="slide"
+      onRequestClose={handleClose}
+    >
+      <SafeAreaView className="flex-1">
         <Pressable className="modal-overlay" onPress={handleClose}>
           <Pressable
             className="modal-container"
@@ -275,8 +277,8 @@ const CreateSubscriptionModal = ({
             </KeyboardAwareScrollView>
           </Pressable>
         </Pressable>
-      </Modal>
-    </SafeAreaView>
+      </SafeAreaView>
+    </Modal>
   );
 };
 
