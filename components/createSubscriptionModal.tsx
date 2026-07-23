@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import { useState } from "react";
 import { Modal, Pressable, Text, TextInput, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface CreateSubscriptionModalProps {
   visible: boolean;
@@ -147,133 +148,135 @@ const CreateSubscriptionModal = ({
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={handleClose}
-    >
-      <Pressable className="modal-overlay" onPress={handleClose}>
-        <Pressable
-          className="modal-container"
-          onPress={(e) => e.stopPropagation()}
-        >
-          <View className="modal-header">
-            <Text className="modal-title">New Subscription</Text>
-            <Pressable className="modal-close" onPress={handleClose}>
-              <Text className="modal-close-text">x</Text>
-            </Pressable>
-          </View>
-
-          <KeyboardAwareScrollView
-            bottomOffset={20}
-            keyboardShouldPersistTaps="handled"
-            contentContainerStyle={{
-              padding: 20,
-              gap: 20,
-            }}
+    <SafeAreaView className="flex-1 bg-background p-5">
+      <Modal
+        visible={visible}
+        transparent
+        animationType="slide"
+        onRequestClose={handleClose}
+      >
+        <Pressable className="modal-overlay" onPress={handleClose}>
+          <Pressable
+            className="modal-container"
+            onPress={(e) => e.stopPropagation()}
           >
-            <View className="auth-field">
-              <Text className="auth-label">Name</Text>
-              <TextInput
-                className="auth-input"
-                placeholder="Subscription Name"
-                placeholderTextColor="rgba(0,0,0,0.4)"
-                value={name}
-                onChangeText={setName}
-              />
+            <View className="modal-header">
+              <Text className="modal-title">New Subscription</Text>
+              <Pressable className="modal-close" onPress={handleClose}>
+                <Text className="modal-close-text">x</Text>
+              </Pressable>
             </View>
 
-            <View className="auth-field">
-              <Text className="auth-label">Price</Text>
-              <TextInput
-                className="auth-input"
-                placeholder="0.00"
-                placeholderTextColor="rgba(0, 0, 0, 0.4)"
-                value={price}
-                onChangeText={setPrice}
-                keyboardType="decimal-pad"
-              />
-            </View>
-
-            <View className="auth-field">
-              <Text className="auth-label">Frequency</Text>
-              <View className="picker-row">
-                <Pressable
-                  className={clsx(
-                    "picker-option",
-                    frequency === "Monthly" && "picker-option-active",
-                  )}
-                  onPress={() => setFrequency("Monthly")}
-                >
-                  <Text
-                    className={clsx(
-                      "picker-option-text",
-                      frequency === "Monthly" && "picker-option-text-active",
-                    )}
-                  >
-                    Monthly
-                  </Text>
-                </Pressable>
-
-                <Pressable
-                  className={clsx(
-                    "picker-option",
-                    frequency === "Yearly" && "picker-option-active",
-                  )}
-                  onPress={() => setFrequency("Yearly")}
-                >
-                  <Text
-                    className={clsx(
-                      "picker-option-text",
-                      frequency === "Yearly" && "picker-option-text-active",
-                    )}
-                  >
-                    Yearly
-                  </Text>
-                </Pressable>
+            <KeyboardAwareScrollView
+              bottomOffset={20}
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={{
+                padding: 20,
+                gap: 20,
+              }}
+            >
+              <View className="auth-field">
+                <Text className="auth-label">Name</Text>
+                <TextInput
+                  className="auth-input"
+                  placeholder="Subscription Name"
+                  placeholderTextColor="rgba(0,0,0,0.4)"
+                  value={name}
+                  onChangeText={setName}
+                />
               </View>
-            </View>
 
-            <View className="auth-field">
-              <Text className="auth-label">Category</Text>
-              <View className="category-scroll">
-                {CATEGORIES.map((cat) => (
+              <View className="auth-field">
+                <Text className="auth-label">Price</Text>
+                <TextInput
+                  className="auth-input"
+                  placeholder="0.00"
+                  placeholderTextColor="rgba(0, 0, 0, 0.4)"
+                  value={price}
+                  onChangeText={setPrice}
+                  keyboardType="decimal-pad"
+                />
+              </View>
+
+              <View className="auth-field">
+                <Text className="auth-label">Frequency</Text>
+                <View className="picker-row">
                   <Pressable
-                    key={cat}
                     className={clsx(
-                      "category-chip",
-                      category === cat && "category-chip-active",
+                      "picker-option",
+                      frequency === "Monthly" && "picker-option-active",
                     )}
-                    onPress={() => setCategory(cat)}
+                    onPress={() => setFrequency("Monthly")}
                   >
                     <Text
                       className={clsx(
-                        "category-chip-text",
-                        category === cat && "category-chip-text-active",
+                        "picker-option-text",
+                        frequency === "Monthly" && "picker-option-text-active",
                       )}
                     >
-                      {cat}
+                      Monthly
                     </Text>
                   </Pressable>
-                ))}
-              </View>
-            </View>
 
-            <Pressable
-              className={clsx(
-                "auth-button",
-                !isValidForm && "auth-button-disable",
-              )}
-              onPress={handleSubmit}
-              disabled={!isValidForm}
-            >
-              <Text>Create Subscription</Text>
-            </Pressable>
-          </KeyboardAwareScrollView>
+                  <Pressable
+                    className={clsx(
+                      "picker-option",
+                      frequency === "Yearly" && "picker-option-active",
+                    )}
+                    onPress={() => setFrequency("Yearly")}
+                  >
+                    <Text
+                      className={clsx(
+                        "picker-option-text",
+                        frequency === "Yearly" && "picker-option-text-active",
+                      )}
+                    >
+                      Yearly
+                    </Text>
+                  </Pressable>
+                </View>
+              </View>
+
+              <View className="auth-field">
+                <Text className="auth-label">Category</Text>
+                <View className="category-scroll">
+                  {CATEGORIES.map((cat) => (
+                    <Pressable
+                      key={cat}
+                      className={clsx(
+                        "category-chip",
+                        category === cat && "category-chip-active",
+                      )}
+                      onPress={() => setCategory(cat)}
+                    >
+                      <Text
+                        className={clsx(
+                          "category-chip-text",
+                          category === cat && "category-chip-text-active",
+                        )}
+                      >
+                        {cat}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </View>
+              </View>
+
+              <Pressable
+                className={clsx(
+                  "auth-button",
+                  !isValidForm && "auth-button-disable",
+                )}
+                onPress={handleSubmit}
+                disabled={!isValidForm}
+              >
+                <Text>Create Subscription</Text>
+              </Pressable>
+            </KeyboardAwareScrollView>
+          </Pressable>
         </Pressable>
-      </Pressable>
-    </Modal>
+      </Modal>
+    </SafeAreaView>
   );
 };
 

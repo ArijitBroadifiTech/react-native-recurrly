@@ -10,17 +10,11 @@ import { useSubscriptionStore } from "@/lib/subscriptionStore";
 import { formatCurrency } from "@/lib/utils";
 import { useUser } from "@clerk/expo";
 import dayjs from "dayjs";
+import { StatusBar } from "expo-status-bar";
 import { styled } from "nativewind";
 import { usePostHog } from "posthog-react-native";
 import { useMemo, useState } from "react";
-import {
-  FlatList,
-  Image,
-  Pressable,
-  StatusBar,
-  Text,
-  View,
-} from "react-native";
+import { FlatList, Image, Pressable, Text, View } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -78,7 +72,7 @@ export default function App() {
 
   return (
     <SafeAreaView className="flex-1 bg-background p-5">
-      <StatusBar barStyle="dark-content" />
+      <StatusBar style="dark" />
 
       <FlatList
         ListHeaderComponent={() => (
