@@ -49,9 +49,9 @@ export default function Insights() {
 
   return (
     <View style={styles.container}>
-      <Text>Notification Example</Text>
-      <StatusBar style="auto" />
+      <StatusBar style="dark" />
 
+      <Text>Notification Example</Text>
       <TouchableOpacity onPress={triggerNotification}>
         <Text>Notify</Text>
       </TouchableOpacity>
