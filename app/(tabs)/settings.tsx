@@ -1,9 +1,10 @@
 import images from "@/constants/images";
 import { useClerk, useUser } from "@clerk/expo";
+import { Ionicons } from "@expo/vector-icons";
 import { styled } from "nativewind";
+import { usePostHog } from "posthog-react-native";
 import { Image, Pressable, Text, View } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
-import { usePostHog } from "posthog-react-native";
 const SafeAreaView = styled(RNSafeAreaView);
 
 const Settings = () => {
@@ -29,8 +30,8 @@ const Settings = () => {
   const email = user?.emailAddresses[0]?.emailAddress;
 
   return (
-    <SafeAreaView className="flex-1 bg-background p-5">
-      <Text className="text-3xl font-sans-bold text-primary mb-6">
+    <SafeAreaView className="flex-1 bg-background dark:bg-darkBackground p-5">
+      <Text className="text-3xl font-sans-bold text-primary dark:text-darkPrimary mb-6">
         Settings
       </Text>
 
@@ -42,7 +43,7 @@ const Settings = () => {
             className="size-16 rounded-full"
           />
           <View className="flex-1">
-            <Text className="text-lg font-sans-bold text-primary">
+            <Text className="text-lg font-sans-bold text-primary dark:text-darkPrimary">
               {displayName}
             </Text>
             {email && (
@@ -80,6 +81,22 @@ const Settings = () => {
               {user?.createdAt
                 ? new Date(user.createdAt).toLocaleDateString()
                 : "N/A"}
+            </Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Theme Switch  */}
+      <View>
+        <Text className="uppercase text-primary dark:text-darkAccent text-lg font-medium mx-2">
+          Appearance
+        </Text>
+
+        <View className="my-4 p-4 bg-card dark:bg-[#224959] rounded-xl ">
+          <View className="flex flex-row gap-4 items-center">
+            <Ionicons name="moon-outline" size={26} color="#a8cad7" />
+            <Text className="text-lg text-primary dark:text-darkPrimary">
+              Display Mode
             </Text>
           </View>
         </View>

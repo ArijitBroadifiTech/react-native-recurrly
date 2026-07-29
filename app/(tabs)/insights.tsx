@@ -17,9 +17,16 @@
 // export default Insights;
 
 import * as Notifications from "expo-notifications";
-import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
+  View,
+} from "react-native";
 
 export default function Insights() {
   useEffect(() => {
@@ -42,18 +49,37 @@ export default function Insights() {
       content: {
         title: "Hello",
         body: "Notification triggered from button press",
+        sound: "notification_sound.wav",
       },
-      trigger: null,
+      trigger:
+        Platform.OS === "android"
+          ? { channelId: "default" } // ✅ Android: ChannelAwareTriggerInput (no `type` needed)
+          : null, // iOS: deliver immediately, sound comes from content.sound
     });
   };
 
-  return (
-    <View style={styles.container}>
-      <StatusBar style="dark" />
+  const colorScheme = useColorScheme();
 
-      <Text>Notification Example</Text>
+  const themeTextStyle =
+    colorScheme === "light" ? styles.lightThemeText : styles.darkThemeText;
+  const themeContainerStyle =
+    colorScheme === "light" ? styles.lightContainer : styles.darkContainer;
+
+  const themeNotificationStyle =
+    colorScheme === "light"
+      ? styles.lightThemeNotiText
+      : styles.darkThemeNotiText;
+
+  return (
+    <View style={[styles.container, themeContainerStyle]}>
+      <Text style={[styles.text, themeTextStyle]}>
+        Color scheme: {colorScheme}
+      </Text>
+      {/* <StatusBar /> */}
+
+      <Text style={[themeNotificationStyle]}>Notification Example</Text>
       <TouchableOpacity onPress={triggerNotification}>
-        <Text>Notify</Text>
+        <Text style={[styles.text, themeNotificationStyle]}>Notify</Text>
       </TouchableOpacity>
     </View>
   );
@@ -62,9 +88,30 @@ export default function Insights() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff9e3",
+    // backgroundColor: "#fff9e3",
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
+  },
+  text: {
+    fontSize: 20,
+  },
+  lightContainer: {
+    backgroundColor: "#d0d0c0",
+  },
+  darkContainer: {
+    backgroundColor: "#242c40",
+  },
+  lightThemeText: {
+    color: "#242c40",
+  },
+  darkThemeText: {
+    color: "#edf6f9",
+  },
+  darkThemeNotiText: {
+    color: "#ced4da",
+  },
+  lightThemeNotiText: {
+    color: "#242c40",
   },
 });

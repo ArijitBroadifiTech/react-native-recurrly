@@ -5,6 +5,7 @@
 @import "nativewind/theme";
 
 @theme {
+  /* ── Light theme ─────────────────────────────── */
   --color-background: #fff9e3;
   --color-foreground: #081126;
   --color-card: #fff8e7;
@@ -16,6 +17,22 @@
   --color-success: #16a34a;
   --color-destructive: #dc2626;
   --color-subscription: #8fd1bd;
+
+  /* ── Dark theme equivalents ──────────────────── */
+  --color-darkBackground: #242c40; /* main screen bg          */
+  --color-darkForeground: #fff9e3; /* body text on dark       */
+  --color-darkCard: #1c2333; /* card surfaces           */
+  --color-darkMuted: #2f3852; /* muted/section bg        */
+  --color-darkMuted-foreground: #ced4da; /* secondary text */
+  --color-darkMuted-border: rgba(255, 255, 255, 0.6);
+  --color-darkPrimary: #e8dfc8; /* headings / strong text  */
+  --color-darkTextBlue: #003566; /* sub headings / muted text  */
+  --color-darkDescription: #f8f9fa;
+  --color-darkAccent: #f0956a; /* accent, slightly warmer */
+  --color-darkBorder: rgba(255, 255, 255, 0.1); /* dividers / strokes */
+  --color-darkSuccess: #4ade80; /* success, brighter on dark */
+  --color-darkDestructive: #f87171; /* error, lighter red       */
+  --color-darkSubscription: #7dd3bf; /* teal tag, lifted for contrast */
 
   --spacing-0: 0px;
   --spacing-1: 4px;
@@ -43,6 +60,17 @@
   --font-sans-semibold: sans-semibold;
   --font-sans-bold: sans-bold;
   --font-sans-extrabold: sans-extrabold;
+}
+
+/* Dark mode overrides — must live OUTSIDE @theme */
+.dark {
+  --color-background: #242c40;
+  --color-foreground: #fff9e3;
+  --color-card: #1c2333;
+  --color-muted: #2f3852;
+  --color-muted-foreground: rgba(255, 255, 255, 0.777);
+  --color-primary: #fff9e3;
+  --color-border: rgba(255, 255, 255, 0.1);
 }
 
 @layer components {
@@ -75,7 +103,7 @@
   }
 
   .home-user-name {
-    @apply ml-4 text-2xl font-sans-bold text-primary;
+    @apply ml-4 text-2xl font-sans-bold text-primary dark:text-darkPrimary;
   }
 
   .home-add-icon {
@@ -107,19 +135,19 @@
   }
 
   .list-title {
-    @apply text-2xl font-sans-bold text-primary;
+    @apply text-2xl font-sans-bold text-primary dark:text-darkForeground;
   }
 
   .list-action {
-    @apply rounded-full border border-black/20 px-4 py-1;
+    @apply rounded-full border border-black/20 dark:border-darkMuted-border px-4 py-1;
   }
 
   .list-action-text {
-    @apply text-lg font-sans-semibold text-primary;
+    @apply text-lg font-sans-semibold text-primary dark:text-darkPrimary;
   }
 
   .upcoming-card {
-    @apply mr-4 w-45 rounded-2xl border border-black/10 bg-background p-3;
+    @apply mr-4 w-45 rounded-2xl border border-black/10 dark:border-darkMuted-border bg-background dark:bg-darkMuted-foreground p-3;
   }
 
   .upcoming-row {
@@ -131,11 +159,11 @@
   }
 
   .upcoming-price {
-    @apply text-lg font-sans-bold text-primary;
+    @apply text-lg font-sans-bold text-primary dark:text-[#003566];
   }
 
   .upcoming-meta {
-    @apply text-sm font-sans-semibold text-muted-foreground;
+    @apply text-sm font-sans-semibold text-muted-foreground dark:text-[#0b5164];
   }
 
   .upcoming-name {
@@ -279,7 +307,7 @@
   }
 
   .auth-card {
-    @apply mt-8 rounded-3xl border border-border bg-card p-5;
+    @apply mt-8 rounded-3xl border border-border bg-card dark:bg-[#778da9] p-5;
   }
 
   .auth-form {

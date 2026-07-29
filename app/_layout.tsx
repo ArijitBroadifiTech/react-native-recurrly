@@ -12,6 +12,7 @@ import {
 } from "expo-router";
 import { PostHogProvider } from "posthog-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Platform } from "react-native";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { posthog } from "../src/config/posthog";
 
@@ -25,12 +26,21 @@ if (!publishableKey) {
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldPlaySound: false,
+    shouldPlaySound: true,
     shouldSetBadge: true,
     shouldShowBanner: true,
     shouldShowList: true,
   }),
 });
+
+// ✅ Add this right below, at module level (outside any component)
+if (Platform.OS === "android") {
+  Notifications.setNotificationChannelAsync("default", {
+    name: "Default",
+    importance: Notifications.AndroidImportance.HIGH,
+    sound: "notification_sound.wav",
+  });
+}
 
 function RootLayoutContent() {
   const { isLoaded: authLoaded } = useAuth();

@@ -16,6 +16,7 @@ import { usePostHog } from "posthog-react-native";
 import { useMemo, useState } from "react";
 import { FlatList, Image, Pressable, Text, View } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
+
 const SafeAreaView = styled(RNSafeAreaView);
 
 export default function App() {
@@ -71,8 +72,8 @@ export default function App() {
     "User";
 
   return (
-    <SafeAreaView className="flex-1 bg-background p-5">
-      <StatusBar style="dark" />
+    <SafeAreaView className="flex-1 bg-background dark:bg-darkBackground p-5">
+      <StatusBar />
 
       <FlatList
         ListHeaderComponent={() => (
@@ -91,7 +92,7 @@ export default function App() {
 
               <Pressable
                 onPress={() => setIsModalVisible(true)}
-                className="rounded-full size-12 overflow-hidden p-2 border border-gray-200 flex items-center justify-center"
+                className="rounded-full size-12 overflow-hidden p-2 border border-gray-200 bg-background dark:bg-darkForeground flex items-center justify-center"
               >
                 <Image source={icons.add} className="home-add-icon" />
               </Pressable>
