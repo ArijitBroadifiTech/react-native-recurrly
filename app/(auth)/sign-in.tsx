@@ -239,6 +239,7 @@ const SignIn = () => {
   // Main sign-in form
   return (
     <SafeAreaView className="auth-safe-area">
+      <StatusBar />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="auth-screen"

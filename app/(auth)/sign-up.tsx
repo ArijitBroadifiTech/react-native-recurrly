@@ -204,6 +204,7 @@ const SignUp = () => {
   // Main sign-up form
   return (
     <SafeAreaView className="auth-safe-area">
+      <StatusBar />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="auth-screen"

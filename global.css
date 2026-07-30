@@ -242,6 +242,14 @@
     @apply flex-1 font-sans-bold text-primary;
   }
 
+  .details-sub-label {
+    @apply shrink-0 text-base font-sans-medium text-muted-foreground dark:text-[#f8f9fa];
+  }
+
+  .details-sub-value {
+    @apply flex-1 font-sans-bold text-primary dark:text-[#e7bc91];
+  }
+
   .sub-cancel {
     @apply mt-2 items-center rounded-full bg-primary py-4;
   }
@@ -383,11 +391,12 @@
   }
 
   .modal-overlay {
-    @apply flex-1 bg-black/50;
+    flex: 1;
+    background-color: rgba(0, 0, 0, 0.35);
   }
 
   .modal-container {
-    @apply mt-auto rounded-t-3xl bg-background;
+    @apply mt-auto rounded-t-3xl bg-background dark:bg-darkBackground border-t-2 border-border dark:border-darkBorder;
   }
 
   .modal-header {
@@ -395,7 +404,7 @@
   }
 
   .modal-title {
-    @apply text-xl font-sans-bold text-primary;
+    @apply text-xl font-sans-bold text-primary dark:text-darkPrimary;
   }
 
   .modal-close {

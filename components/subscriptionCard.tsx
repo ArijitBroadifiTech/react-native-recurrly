@@ -3,11 +3,14 @@ import {
   formatStatusLabel,
   formatSubscriptionDateTime,
 } from "@/lib/utils";
+import { Ionicons } from "@expo/vector-icons";
 import clsx from "clsx";
+import { router } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 import { RenderIcon } from "./renderIcon";
 
 const SubscriptionCard = ({
+  id,
   name,
   price,
   currency,
@@ -23,6 +26,13 @@ const SubscriptionCard = ({
   onPress,
   expanded,
 }: SubscriptionCardProps) => {
+  function handleSubscriptionRedirect() {
+    router.push({
+      pathname: "/subscriptions/[id]",
+      params: { id: id },
+    });
+  }
+
   return (
     <Pressable
       onPress={onPress}
@@ -52,7 +62,7 @@ const SubscriptionCard = ({
       </View>
 
       {expanded && (
-        <View className="sub-bdy">
+        <View className="sub-body">
           <View className="sub-details">
             <View className="sub-row">
               <View className="sub-row-copy">
@@ -117,6 +127,12 @@ const SubscriptionCard = ({
                   {status ? formatStatusLabel(status) : "Not provided"}
                 </Text>
               </View>
+            </View>
+
+            <View className="w-full items-end mb-1">
+              <Pressable onPress={handleSubscriptionRedirect}>
+                <Ionicons name="arrow-up-right-box-outline" size={18} />
+              </Pressable>
             </View>
           </View>
         </View>
