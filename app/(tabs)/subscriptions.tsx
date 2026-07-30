@@ -2,7 +2,7 @@ import SubscriptionCard from "@/components/subscriptionCard";
 import { useSubscriptionStore } from "@/lib/subscriptionStore";
 import { styled } from "nativewind";
 import { useState } from "react";
-import { FlatList, Text, TextInput, View } from "react-native";
+import { FlatList, Text, TextInput, useColorScheme, View } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 
 const SafeAreaView = styled(RNSafeAreaView);
@@ -21,20 +21,24 @@ const Subscriptions = () => {
       subscription.plan?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
+  const colorScheme = useColorScheme();
+
   return (
-    <SafeAreaView className="flex-1 bg-background">
+    <SafeAreaView className="flex-1 bg-background dark:bg-darkBackground">
       <FlatList
         data={filteredSubscriptions}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={
           <View className="pt-5">
-            <Text className="text-3xl font-bold text-dark mb-5">
+            <Text className="text-3xl font-bold text-dark dark:text-darkForeground mb-5">
               Subscriptions
             </Text>
             <TextInput
-              className="bg-card rounded-xl px-4 py-4 text-dark mb-4 border border-border"
+              className="bg-card dark:bg-darkCard rounded-xl px-4 py-4 text-dark mb-4 border border-border dark:border-darkBorder"
               placeholder="Search subscriptions..."
-              placeholderTextColor="#666"
+              placeholderTextColor={
+                colorScheme === "light" ? "#666" : "#ced4da"
+              }
               value={searchQuery}
               onChangeText={setSearchQuery}
             />

@@ -1,3 +1,4 @@
+import GlassCard from "@/components/glassCard";
 import { useAuth, useSignUp } from "@clerk/expo";
 import { Link, useRouter, type Href } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -11,6 +12,7 @@ import {
   ScrollView,
   Text,
   TextInput,
+  useColorScheme,
   View,
 } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
@@ -18,6 +20,11 @@ import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 const SafeAreaView = styled(RNSafeAreaView);
 
 const SignUp = () => {
+  //Theme setup
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+  const tint: "light" | "dark" = isDark ? "dark" : "light";
+
   const { signUp, errors, fetchStatus } = useSignUp();
   const { isSignedIn } = useAuth();
   const router = useRouter();
@@ -141,50 +148,52 @@ const SignUp = () => {
               </View>
 
               {/* Verification Form */}
-              <View className="auth-card">
-                <View className="auth-form">
-                  <View className="auth-field">
-                    <Text className="auth-label">Verification Code</Text>
-                    <TextInput
-                      className="auth-input"
-                      value={code}
-                      placeholder="Enter 6-digit code"
-                      placeholderTextColor="rgba(0, 0, 0, 0.4)"
-                      onChangeText={setCode}
-                      keyboardType="number-pad"
-                      autoComplete="one-time-code"
-                      maxLength={6}
-                    />
-                    {errors.fields.code && (
-                      <Text className="auth-error">
-                        {errors.fields.code.message}
+              <GlassCard tint={tint} style={{ marginTop: 32 }}>
+                <View className="auth-card">
+                  <View className="auth-form">
+                    <View className="auth-field">
+                      <Text className="auth-label">Verification Code</Text>
+                      <TextInput
+                        className="auth-input"
+                        value={code}
+                        placeholder="Enter 6-digit code"
+                        placeholderTextColor="rgba(0, 0, 0, 0.4)"
+                        onChangeText={setCode}
+                        keyboardType="number-pad"
+                        autoComplete="one-time-code"
+                        maxLength={6}
+                      />
+                      {errors.fields.code && (
+                        <Text className="auth-error">
+                          {errors.fields.code.message}
+                        </Text>
+                      )}
+                    </View>
+
+                    <Pressable
+                      className={`auth-button ${(!code || fetchStatus === "fetching") && "auth-button-disabled"}`}
+                      onPress={handleVerify}
+                      disabled={!code || fetchStatus === "fetching"}
+                    >
+                      <Text className="auth-button-text">
+                        {fetchStatus === "fetching"
+                          ? "Verifying..."
+                          : "Verify Email"}
                       </Text>
-                    )}
+                    </Pressable>
+
+                    <Pressable
+                      className="auth-secondary-button"
+                      onPress={() => signUp.verifications.sendEmailCode()}
+                      disabled={fetchStatus === "fetching"}
+                    >
+                      <Text className="auth-secondary-button-text">
+                        Resend Code
+                      </Text>
+                    </Pressable>
                   </View>
-
-                  <Pressable
-                    className={`auth-button ${(!code || fetchStatus === "fetching") && "auth-button-disabled"}`}
-                    onPress={handleVerify}
-                    disabled={!code || fetchStatus === "fetching"}
-                  >
-                    <Text className="auth-button-text">
-                      {fetchStatus === "fetching"
-                        ? "Verifying..."
-                        : "Verify Email"}
-                    </Text>
-                  </Pressable>
-
-                  <Pressable
-                    className="auth-secondary-button"
-                    onPress={() => signUp.verifications.sendEmailCode()}
-                    disabled={fetchStatus === "fetching"}
-                  >
-                    <Text className="auth-secondary-button-text">
-                      Resend Code
-                    </Text>
-                  </Pressable>
                 </View>
-              </View>
+              </GlassCard>
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
@@ -223,75 +232,77 @@ const SignUp = () => {
             </View>
 
             {/* Sign-Up Form */}
-            <View className="auth-card">
-              <View className="auth-form">
-                <View className="auth-field">
-                  <Text className="auth-label">Email Address</Text>
-                  <TextInput
-                    className={`auth-input ${emailTouched && !emailValid && "auth-input-error"}`}
-                    autoCapitalize="none"
-                    value={emailAddress}
-                    placeholder="name@example.com"
-                    placeholderTextColor="rgba(0, 0, 0, 0.4)"
-                    onChangeText={setEmailAddress}
-                    onBlur={() => setEmailTouched(true)}
-                    keyboardType="email-address"
-                    autoComplete="email"
-                  />
-                  {emailTouched && !emailValid && (
-                    <Text className="auth-error">
-                      Please enter a valid email address
-                    </Text>
-                  )}
-                  {errors.fields.emailAddress && (
-                    <Text className="auth-error">
-                      {errors.fields.emailAddress.message}
-                    </Text>
-                  )}
-                </View>
+            <GlassCard tint={tint} style={{ marginTop: 32 }}>
+              <View className="auth-card">
+                <View className="auth-form">
+                  <View className="auth-field">
+                    <Text className="auth-label">Email Address</Text>
+                    <TextInput
+                      className={`auth-input ${emailTouched && !emailValid && "auth-input-error"}`}
+                      autoCapitalize="none"
+                      value={emailAddress}
+                      placeholder="name@example.com"
+                      placeholderTextColor="rgba(0, 0, 0, 0.4)"
+                      onChangeText={setEmailAddress}
+                      onBlur={() => setEmailTouched(true)}
+                      keyboardType="email-address"
+                      autoComplete="email"
+                    />
+                    {emailTouched && !emailValid && (
+                      <Text className="auth-error">
+                        Please enter a valid email address
+                      </Text>
+                    )}
+                    {errors.fields.emailAddress && (
+                      <Text className="auth-error">
+                        {errors.fields.emailAddress.message}
+                      </Text>
+                    )}
+                  </View>
 
-                <View className="auth-field">
-                  <Text className="auth-label">Password</Text>
-                  <TextInput
-                    className={`auth-input ${passwordTouched && !passwordValid && "auth-input-error"}`}
-                    value={password}
-                    placeholder="Create a strong password"
-                    placeholderTextColor="rgba(0, 0, 0, 0.4)"
-                    secureTextEntry
-                    onChangeText={setPassword}
-                    onBlur={() => setPasswordTouched(true)}
-                    autoComplete="password-new"
-                  />
-                  {passwordTouched && !passwordValid && (
-                    <Text className="auth-error">
-                      Password must be at least 8 characters
-                    </Text>
-                  )}
-                  {errors.fields.password && (
-                    <Text className="auth-error">
-                      {errors.fields.password.message}
-                    </Text>
-                  )}
-                  {!passwordTouched && (
-                    <Text className="auth-helper">
-                      Minimum 8 characters required
-                    </Text>
-                  )}
-                </View>
+                  <View className="auth-field">
+                    <Text className="auth-label">Password</Text>
+                    <TextInput
+                      className={`auth-input ${passwordTouched && !passwordValid && "auth-input-error"}`}
+                      value={password}
+                      placeholder="Create a strong password"
+                      placeholderTextColor="rgba(0, 0, 0, 0.4)"
+                      secureTextEntry
+                      onChangeText={setPassword}
+                      onBlur={() => setPasswordTouched(true)}
+                      autoComplete="password-new"
+                    />
+                    {passwordTouched && !passwordValid && (
+                      <Text className="auth-error">
+                        Password must be at least 8 characters
+                      </Text>
+                    )}
+                    {errors.fields.password && (
+                      <Text className="auth-error">
+                        {errors.fields.password.message}
+                      </Text>
+                    )}
+                    {!passwordTouched && (
+                      <Text className="auth-helper">
+                        Minimum 8 characters required
+                      </Text>
+                    )}
+                  </View>
 
-                <Pressable
-                  className={`auth-button ${(!formValid || fetchStatus === "fetching") && "auth-button-disabled"}`}
-                  onPress={handleSubmit}
-                  disabled={!formValid || fetchStatus === "fetching"}
-                >
-                  <Text className="auth-button-text">
-                    {fetchStatus === "fetching"
-                      ? "Creating Account..."
-                      : "Create Account"}
-                  </Text>
-                </Pressable>
+                  <Pressable
+                    className={`auth-button ${(!formValid || fetchStatus === "fetching") && "auth-button-disabled"}`}
+                    onPress={handleSubmit}
+                    disabled={!formValid || fetchStatus === "fetching"}
+                  >
+                    <Text className="auth-button-text">
+                      {fetchStatus === "fetching"
+                        ? "Creating Account..."
+                        : "Create Account"}
+                    </Text>
+                  </Pressable>
+                </View>
               </View>
-            </View>
+            </GlassCard>
 
             {/* Sign-In Link */}
             <View className="auth-link-row">
