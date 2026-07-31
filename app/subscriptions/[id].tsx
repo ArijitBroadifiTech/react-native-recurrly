@@ -9,9 +9,18 @@ import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { styled } from "nativewind";
 import { usePostHog } from "posthog-react-native";
-import React, { useEffect } from "react";
-import { Pressable, Text, View } from "react-native";
+import React, { useCallback, useMemo, useRef } from "react";
+import {
+  Dimensions,
+  FlatList,
+  Pressable,
+  Text,
+  View,
+  ViewToken,
+} from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
+
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -19,96 +28,78 @@ const SubscriptionsDetails = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
   const posthog = usePostHog();
   const { subscriptions } = useSubscriptionStore();
+  const listRef = useRef<FlatList>(null);
 
-  const subscription = subscriptions.find((sub) => sub.id === id);
+  const initialIndex = useMemo(
+    () =>
+      Math.max(
+        subscriptions.findIndex((s) => s.id === id),
+        0,
+      ),
+    [subscriptions, id],
+  );
 
-  useEffect(() => {
-    posthog.capture("subscription_detail_viewed", {
-      subscription_id: id,
-    });
-  }, [id, posthog]);
+  const getItemLayout = useCallback(
+    (_: unknown, index: number) => ({
+      length: SCREEN_HEIGHT,
+      offset: SCREEN_HEIGHT * index,
+      index,
+    }),
+    [],
+  );
 
-  if (!subscription) {
-    return (
-      <SafeAreaView className="flex-1 bg-background dark:bg-darkBackground">
-        <Text className="text-white">Subscription not found.</Text>
-        <Pressable onPress={() => router.back()}>
-          <Text className="text-primary dark:text-darkPrimary">Go back</Text>
-        </Pressable>
-      </SafeAreaView>
-    );
-  }
+  const onViewableItemsChanged = useRef(
+    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
+      const current = viewableItems[0]?.item as Subscription | undefined;
+      if (current) {
+        posthog.capture("subscription_detail_viewed", {
+          subscription_id: current.id,
+        });
+      }
+    },
+  ).current;
 
-  const {
-    name,
-    price,
-    currency,
-    icon,
-    billing,
-    color,
-    category,
-    renewalDate,
-    plan,
-    status,
-    paymentMethod,
-    startDate,
-  } = subscription;
+  const viewabilityConfig = useRef({ itemVisiblePercentThreshold: 80 }).current;
 
-  return (
-    <SafeAreaView className="flex-1 bg-background dark:bg-darkBackground">
-      <View className="p-5 ">
-        <Pressable
-          onPress={() => router.back()}
-          className="flex flex-row gap-2 mb-4"
-        >
-          <Ionicons
-            name="arrow-back-outline"
-            size={22}
-            className="text-muted-foreground dark:text-darkMuted-foreground"
-          />
-          <Text className="text-muted-foreground dark:text-darkMuted-foreground">
-            Go back
-          </Text>
-        </Pressable>
-
-        <Text className="text-[#ddbea9] dark:text-[#ddbea9] text-xl font-medium ">
-          Subscriptions Details of {name}
+  const renderItem = useCallback(
+    ({ item }: { item: Subscription }) => (
+      <View style={{ height: SCREEN_HEIGHT, paddingHorizontal: 20 }}>
+        <Text className="text-[#ddbea9] text-xl font-medium">
+          Subscriptions Details of {item.name}
         </Text>
 
         <View className="mt-4">
           <View className="sub-head">
             <View className="sub-main">
               <View className="bg-muted dark:bg-darkMuted-foreground rounded-xl p-2">
-                <RenderIcon icon={icon} className="sub-icon" />
+                <RenderIcon icon={item.icon} className="sub-icon" />
               </View>
               <View className="sub-copy">
                 <Text
                   numberOfLines={1}
                   className="mb-1 text-lg font-sans-bold text-primary dark:text-darkForeground"
                 >
-                  {name}
+                  {item.name}
                 </Text>
-
                 <Text
                   numberOfLines={1}
                   ellipsizeMode="tail"
                   className="text-sm font-sans-semibold text-muted-foreground dark:text-darkMuted-foreground"
                 >
-                  {category?.trim() ||
-                    plan?.trim() ||
-                    (renewalDate
-                      ? formatSubscriptionDateTime(renewalDate)
+                  {item.category?.trim() ||
+                    item.plan?.trim() ||
+                    (item.renewalDate
+                      ? formatSubscriptionDateTime(item.renewalDate)
                       : "")}
                 </Text>
               </View>
             </View>
-
             <View className="sub-price-box">
               <Text className="mb-1 text-lg font-sans-bold text-primary dark:text-darkPrimary">
-                {formatCurrency(price, currency)}
+                {formatCurrency(item.price, item.currency)}
               </Text>
               <Text className="text-sm font-sans-medium text-muted-foreground dark:text-darkMuted-foreground">
-                {billing}
+                {item.billing}
               </Text>
             </View>
           </View>
@@ -122,7 +113,7 @@ const SubscriptionsDetails = () => {
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
-                  {paymentMethod?.trim() ?? "Not provided"}
+                  {item.paymentMethod?.trim() ?? "Not provided"}
                 </Text>
               </View>
             </View>
@@ -134,7 +125,8 @@ const SubscriptionsDetails = () => {
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
-                  {(category?.trim() || plan?.trim()) ?? "Not provided"}
+                  {(item.category?.trim() || item.plan?.trim()) ??
+                    "Not provided"}
                 </Text>
               </View>
             </View>
@@ -146,8 +138,8 @@ const SubscriptionsDetails = () => {
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
-                  {startDate
-                    ? formatSubscriptionDateTime(startDate)
+                  {item.startDate
+                    ? formatSubscriptionDateTime(item.startDate)
                     : "Not provided"}
                 </Text>
               </View>
@@ -160,8 +152,8 @@ const SubscriptionsDetails = () => {
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
-                  {renewalDate
-                    ? formatSubscriptionDateTime(renewalDate)
+                  {item.renewalDate
+                    ? formatSubscriptionDateTime(item.renewalDate)
                     : "Not provided"}
                 </Text>
               </View>
@@ -174,12 +166,59 @@ const SubscriptionsDetails = () => {
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
-                  {status ? formatStatusLabel(status) : "Not provided"}
+                  {item.status
+                    ? formatStatusLabel(item.status)
+                    : "Not provided"}
                 </Text>
               </View>
             </View>
           </View>
         </View>
+      </View>
+    ),
+    [],
+  );
+
+  if (subscriptions.length === 0) return null;
+
+  return (
+    <SafeAreaView
+      className="flex-1 bg-background dark:bg-darkBackground"
+      edges={["top"]}
+    >
+      <View className="py-5">
+        <Pressable
+          onPress={() => router.back()}
+          className="flex flex-row gap-2 mb-4 px-5"
+        >
+          <Ionicons
+            name="arrow-back-outline"
+            size={22}
+            className="text-muted-foreground dark:text-darkMuted-foreground"
+          />
+          <Text className="text-muted-foreground dark:text-darkMuted-foreground">
+            Go back
+          </Text>
+        </Pressable>
+        <FlatList
+          ref={listRef}
+          data={subscriptions}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          pagingEnabled
+          showsVerticalScrollIndicator={true}
+          initialScrollIndex={initialIndex}
+          getItemLayout={getItemLayout}
+          onViewableItemsChanged={onViewableItemsChanged}
+          viewabilityConfig={viewabilityConfig}
+          decelerationRate="fast"
+          snapToInterval={SCREEN_HEIGHT}
+          snapToAlignment="start"
+          windowSize={3}
+          initialNumToRender={1}
+          maxToRenderPerBatch={2}
+          removeClippedSubviews
+        />
       </View>
     </SafeAreaView>
   );
