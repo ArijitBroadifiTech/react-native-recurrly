@@ -1,3 +1,4 @@
+import NotificationSettings from "@/components/settings/notificationSettings";
 import images from "@/constants/images";
 import { useClerk, useUser } from "@clerk/expo";
 import { Ionicons } from "@expo/vector-icons";
@@ -50,6 +51,7 @@ type SettingsRowProps = {
   iconColor?: string;
   last?: boolean;
   isDark: boolean;
+  children?: React.ReactNode;
 };
 
 const SettingsRow = ({
@@ -59,6 +61,7 @@ const SettingsRow = ({
   iconColor = "#6b7280",
   last = false,
   isDark,
+  children,
 }: SettingsRowProps) => (
   <View>
     <View
@@ -108,11 +111,7 @@ const SettingsRow = ({
           {value}
         </Text>
       ) : (
-        <Ionicons
-          name="chevron-forward"
-          size={16}
-          color={isDark ? "#e8dfc8" : "rgba(0,0,0,0.30)"}
-        />
+        <View>{children}</View>
       )}
     </View>
 
@@ -241,6 +240,7 @@ const Settings = () => {
               >
                 {displayName}
               </Text>
+
               {email && (
                 <Text
                   style={{
@@ -296,7 +296,9 @@ const Settings = () => {
             label="Notifications"
             iconColor="#fb923c"
             isDark={isDark}
-          />
+          >
+            <NotificationSettings />
+          </SettingsRow>
           <SettingsRow
             icon="globe-outline"
             label="Language"
@@ -315,13 +317,17 @@ const Settings = () => {
             label="Privacy Policy"
             iconColor="#38bdf8"
             isDark={isDark}
-          />
+          >
+            <NotificationSettings />
+          </SettingsRow>
           <SettingsRow
             icon="document-text-outline"
             label="Terms of Service"
             iconColor="#a3e635"
             isDark={isDark}
-          />
+          >
+            <NotificationSettings />
+          </SettingsRow>
           <SettingsRow
             icon="information-circle-outline"
             label="Version"
