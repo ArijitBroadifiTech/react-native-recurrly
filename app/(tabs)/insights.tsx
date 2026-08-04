@@ -1,78 +1,160 @@
+import { Color } from "@/constants/colorPalette";
+import { generateMonthlyData, monthNames } from "@/lib/generateBarData";
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { StatusBar } from "expo-status-bar";
 import { styled } from "nativewind";
-import React, { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import React, { useMemo, useState } from "react";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { BarChart } from "react-native-gifted-charts";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
-type DataPoint = {
-  label: string;
-  value: number;
-};
-
-const data: DataPoint[] = [
-  { label: "Mon", value: 37 },
-  { label: "Tue", value: 31 },
-  { label: "Wed", value: 22 },
-  { label: "Thr", value: 40 },
-  { label: "Fri", value: 33 },
-  { label: "Sat", value: 21 },
-  { label: "Sun", value: 22 },
+const barData = [
+  { value: 37, label: "Mon" },
+  { value: 31, label: "Tue" },
+  { value: 22, label: "Wed" },
+  { value: 40, label: "Thr" },
+  { value: 33, label: "Fri" },
+  { value: 21, label: "Sat" },
+  { value: 22, label: "Sun" },
 ];
 
-const MAX_VALUE = 45;
-const CHART_HEIGHT = 160;
-const BAR_WIDTH = 10;
+const colorThemes = {
+  blue: { name: "blue", primary: 500, accent: 600 },
+  purple: { name: "purple", primary: 500, accent: 600 },
+  emerald: { name: "emerald", primary: 500, accent: 600 },
+  orange: { name: "orange", primary: 500, accent: 600 },
+  pink: { name: "pink", primary: 500, accent: 600 },
+  cyan: { name: "cyan", primary: 500, accent: 600 },
+} as const;
 
 export default function UpcomingBarChart() {
-  const [activeIndex, setActiveIndex] = useState<number | null>(3); // Thr active by default
+  const [colorTheme, setColorTheme] =
+    useState<keyof typeof colorThemes>("cyan");
+
+  const date = new Date();
+
+  const [currentMonth, setCurrentMonth] = useState(date.getMonth());
+
+  const [currentYear, setCurrentYear] = useState(date.getFullYear());
+
+  function setNewDate(direction: number) {
+    let newMonth = currentMonth + direction;
+    let newYear = currentYear;
+
+    if (newMonth > 11) {
+      newMonth = 0;
+      newYear++;
+    } else if (newMonth < 0) {
+      newMonth = 11;
+      newYear--;
+    }
+
+    setCurrentMonth(newMonth);
+    setCurrentYear(newYear);
+  }
+
+  // const monthlyData = generateMonthlyData(currentYear, currentMonth);
+
+  const monthlyData = useMemo(
+    () => generateMonthlyData(currentYear, currentMonth + 1),
+    [currentYear, currentMonth],
+  );
+
+  const theme = colorThemes[colorTheme];
+
+  const themeColor = Color[theme.name];
+
+  const bgColors = [themeColor[100], "#ffffff", themeColor[100]] as const;
 
   return (
-    <SafeAreaView className="flex-1  bg-background dark:bg-darkBackground p-5">
-      <View style={styles.card}>
-        {/* Y-axis labels + chart */}
-        <View style={styles.chartRow}>
-          <View style={styles.yAxis}>
-            {[45, 35, 25, 15, 5, 0].map((v) => (
-              <Text key={v} style={styles.yLabel}>
-                {v}
-              </Text>
-            ))}
+    <LinearGradient style={{ flex: 1 }} colors={bgColors}>
+      <SafeAreaView className="flex-1  p-5">
+        <StatusBar style="dark" />
+
+        <View className="flex flex-row justify-center gap-[20%] items-center mt-4 mb-8">
+          <Pressable onPress={() => setNewDate(-1)}>
+            <Ionicons
+              name="arrow-back-outline"
+              size={20}
+              className="text-gray-500"
+            />
+          </Pressable>
+
+          <View className="flex flex-row gap-1">
+            <Text className="text-[#264653]">{`${monthNames[currentMonth]},`}</Text>
+            <Text className="text-[#264653] font-medium ">{currentYear}</Text>
           </View>
 
-          <View style={styles.barsContainer}>
-            {data.map((point, index) => {
-              const isActive = index === activeIndex;
-              const barHeight = (point.value / MAX_VALUE) * CHART_HEIGHT;
-
-              return (
-                <Pressable
-                  key={point.label}
-                  style={styles.barColumn}
-                  onPress={() => setActiveIndex(index)}
-                >
-                  {isActive && (
-                    <View style={styles.tooltip}>
-                      <Text style={styles.tooltipText}>${point.value}</Text>
-                    </View>
-                  )}
-                  <View
-                    style={[
-                      styles.bar,
-                      {
-                        height: barHeight,
-                        backgroundColor: isActive ? "#F4845F" : "#0F172A",
-                      },
-                    ]}
-                  />
-                  <Text style={styles.xLabel}>{point.label}</Text>
-                </Pressable>
-              );
-            })}
-          </View>
+          <Pressable onPress={() => setNewDate(1)}>
+            <Ionicons
+              name="arrow-forward-outline"
+              size={20}
+              className="text-gray-600"
+            />
+          </Pressable>
         </View>
-      </View>
-    </SafeAreaView>
+
+        <BarChart
+          key={`${currentYear}-${currentMonth}`}
+          data={monthlyData}
+          showGradient
+          gradientColor={Color[theme.name][500]}
+          frontColor={Color[theme.name][300]}
+          barWidth={15}
+          barBorderRadius={5}
+          spacing={30}
+          maxValue={100}
+          noOfSections={4}
+          yAxisTextStyle={{ color: "#264653", fontSize: 11 }}
+          xAxisLabelTextStyle={{
+            color: "#219ebc",
+            fontSize: 12,
+            fontWeight: "500",
+          }}
+          isAnimated
+          animationDuration={1500}
+          hideRules={false}
+          rulesType="dashed"
+          yAxisThickness={0}
+          xAxisThickness={0}
+        />
+
+        {/* Color  Theme selector */}
+        <View className="py-4 mt-5">
+          <Text className="font-medium text-sm text-gray-600 pb-1">
+            Choose Theme
+          </Text>
+          <ScrollView
+            contentContainerClassName="gap-4 py-2 px-1"
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          >
+            {(Object.keys(colorThemes) as (keyof typeof colorThemes)[]).map(
+              (themeKey) => (
+                <Pressable
+                  key={themeKey}
+                  onPress={() => setColorTheme(themeKey)}
+                  style={{
+                    borderColor: Color[colorThemes[themeKey].name][300],
+                    borderRadius: 15,
+                    boxShadow:
+                      colorTheme === themeKey
+                        ? "0px 2px 8px rgba(0,0,0,0.2)"
+                        : "none",
+                  }}
+                  className="border px-3 py-1.5 rounded-2xl text-center "
+                >
+                  <Text className="text-gray-500 font-medium">{themeKey}</Text>
+                </Pressable>
+              ),
+            )}
+          </ScrollView>
+        </View>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
@@ -81,57 +163,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5EFDD",
     borderRadius: 20,
     padding: 16,
-  },
-  chartRow: {
-    flexDirection: "row",
-  },
-  yAxis: {
-    justifyContent: "space-between",
-    height: CHART_HEIGHT,
-    marginRight: 8,
-    paddingBottom: 20, // aligns with x-axis labels below bars
-  },
-  yLabel: {
-    fontSize: 11,
-    color: "#8A8578",
-  },
-  barsContainer: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "flex-end",
-    justifyContent: "space-between",
-    height: CHART_HEIGHT + 20,
-  },
-  barColumn: {
-    alignItems: "center",
-    justifyContent: "flex-end",
-    flex: 1,
-  },
-  bar: {
-    width: BAR_WIDTH,
-    borderRadius: BAR_WIDTH / 2,
-  },
-  xLabel: {
-    marginTop: 6,
-    fontSize: 12,
-    color: "#0F172A",
-    fontWeight: "500",
-  },
-  tooltip: {
-    backgroundColor: "#FFF",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-    marginBottom: 6,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  tooltipText: {
-    color: "#F4845F",
-    fontWeight: "700",
-    fontSize: 13,
+    boxShadow: "0px 2px 8px rgba(0,0,0,0.05)",
   },
 });
