@@ -263,7 +263,7 @@
   }
 
   .home-empty-state {
-    @apply py-4 text-sm font-sans-medium text-black/60;
+    @apply py-4 text-sm font-sans-medium text-black/60 dark:text-darkAccent;
   }
 
   .auth-safe-area {
@@ -457,5 +457,25 @@
 
   .category-chip-text-active {
     @apply text-accent;
+  }
+
+  .filter-modal-text {
+    @apply text-lg text-primary dark:text-darkPrimary mb-2;
+  }
+
+  .filter-modal-option {
+    @apply rounded-2xl border py-2 px-3 border-border dark:border-darkBorder bg-background dark:bg-darkBackground;
+  }
+
+  .filter-modal-option-active {
+    @apply border-accent dark:border-darkAccent bg-accent;
+  }
+
+  .filter-modal-option-text {
+    @apply text-sm font-sans-semibold text-muted-foreground dark:text-darkMuted-foreground;
+  }
+
+  .filter-modal-option-text-active {
+    @apply text-white;
   }
 }

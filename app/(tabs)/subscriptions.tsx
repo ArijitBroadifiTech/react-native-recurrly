@@ -1,8 +1,17 @@
+import FilterModal from "@/components/filterModal";
 import SubscriptionCard from "@/components/subscriptionCard";
 import { useSubscriptionStore } from "@/lib/subscriptionStore";
+import { Ionicons } from "@expo/vector-icons";
 import { styled } from "nativewind";
 import { useState } from "react";
-import { FlatList, Text, TextInput, useColorScheme, View } from "react-native";
+import {
+  FlatList,
+  Pressable,
+  Text,
+  TextInput,
+  useColorScheme,
+  View,
+} from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 
 const SafeAreaView = styled(RNSafeAreaView);
@@ -10,6 +19,7 @@ const SafeAreaView = styled(RNSafeAreaView);
 const Subscriptions = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
   const { subscriptions } = useSubscriptionStore();
 
   const filteredSubscriptions = subscriptions.filter(
@@ -33,15 +43,25 @@ const Subscriptions = () => {
             <Text className="text-3xl font-bold text-dark dark:text-darkForeground mb-5">
               Subscriptions
             </Text>
-            <TextInput
-              className="bg-card dark:bg-darkCard rounded-xl px-4 py-4 text-dark mb-4 border border-border dark:border-darkBorder"
-              placeholder="Search subscriptions..."
-              placeholderTextColor={
-                colorScheme === "light" ? "#666" : "#ced4da"
-              }
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
+            <View className="flex flex-row gap-4 justify-between items-center mb-4">
+              <TextInput
+                className="flex-1 bg-card dark:bg-darkCard rounded-xl px-4 py-4 text-dark  border border-border dark:border-darkBorder"
+                placeholder="Search subscriptions..."
+                placeholderTextColor={
+                  colorScheme === "light" ? "#666" : "#ced4da"
+                }
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+              />
+
+              <Pressable onPress={() => setShowModal(true)}>
+                <Ionicons
+                  name="list-outline"
+                  size={35}
+                  className="text-primary dark:text-darkPrimary"
+                />
+              </Pressable>
+            </View>
           </View>
         }
         renderItem={({ item }) => (
@@ -62,6 +82,13 @@ const Subscriptions = () => {
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
       />
+
+      {showModal && (
+        <FilterModal
+          isVisible={showModal}
+          onClose={() => setShowModal(false)}
+        />
+      )}
     </SafeAreaView>
   );
 };
