@@ -44,19 +44,35 @@ const FilterModal = ({ isVisible, onClose }: FilterModalProps) => {
   const [frequency, setFrequency] = useState<Frequency>("Monthly");
   const [category, setCategory] = useState<Category>("Entertainment");
   const [status, setStatus] = useState<Status>("Active");
-  let setStartDate = "";
-  const [endDate, setEndDate] = useState(null);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
 
   const [showStartDate, setShowStartDate] = useState(false);
+  const [showEndDate, setShowEndDate] = useState(false);
 
   const currentDate = new Date();
 
   const handleStartDate = (_event: unknown, selectedDate?: Date) => {
     if (Platform.OS === "android") setShowStartDate(false);
     if (selectedDate) {
-      const date = selectedDate.toDateString();
-      setStartDate = date;
+      // const date = selectedDate.toISOString();
+      setStartDate(selectedDate);
     }
+  };
+
+  const handleLastDate = (_event: unknown, selectedDate?: Date) => {
+    if (Platform.OS === "android") setShowEndDate(false);
+    if (selectedDate) {
+      setEndDate(selectedDate);
+    }
+  };
+
+  const handleReset = () => {
+    setFrequency("Monthly");
+    setCategory("Entertainment");
+    setStatus("Active");
+    setStartDate(null);
+    setEndDate(null);
   };
 
   return (
@@ -91,7 +107,7 @@ const FilterModal = ({ isVisible, onClose }: FilterModalProps) => {
                   <Text className="text-lg font-semibold text-accent dark:text-darkAccent">
                     Filter
                   </Text>
-                  <Pressable>
+                  <Pressable onPress={handleReset}>
                     <Text className="text-primary dark:text-darkPrimary">
                       Reset
                     </Text>
@@ -101,7 +117,7 @@ const FilterModal = ({ isVisible, onClose }: FilterModalProps) => {
                   bottomOffset={20}
                   keyboardShouldPersistTaps="handled"
                   contentContainerStyle={{
-                    padding: 20,
+                    paddingVertical: 20,
                     gap: 20,
                   }}
                 >
@@ -196,24 +212,65 @@ const FilterModal = ({ isVisible, onClose }: FilterModalProps) => {
                       </View>
                     </View>
 
-                    <View>
-                      <Text className="filter-modal-text">Date</Text>
-                      <View className="flex-row justify-between gap-4 ">
-                        <View>
-                          <Text>Start Date</Text>
-
-                          {/* {startDate ? (
-                            <Text className="my-4 text-white">
-                              You chose: {startDate}
+                    <View className="flex-row justify-between gap-10">
+                      {/* Start Date */}
+                      <View className="flex-1 gap-2">
+                        <Text className="text-foreground dark:text-darkForeground font-medium">
+                          Start Date
+                        </Text>
+                        <Pressable
+                          onPress={() => setShowStartDate(true)}
+                          className="flex-row justify-between items-center px-3 py-3 border border-gray-400 rounded-xl"
+                        >
+                          {startDate ? (
+                            <Text className="text-gray-100 text-sm">
+                              {startDate.toLocaleDateString()}
                             </Text>
-                          ) : null} */}
-                        </View>
+                          ) : (
+                            <Text className="text-gray-400 text-sm">
+                              Select date
+                            </Text>
+                          )}
+
+                          <Ionicons
+                            name="calendar-clear-outline"
+                            size={15}
+                            className="text-gray-400"
+                          />
+                        </Pressable>
+                      </View>
+
+                      {/* End Date */}
+                      <View className="flex-1 gap-2">
+                        <Text className="text-foreground dark:text-darkForeground font-medium">
+                          End Date
+                        </Text>
+                        <Pressable
+                          onPress={() => setShowEndDate(true)}
+                          className="flex-row justify-between items-center px-3 py-3 border border-gray-400 rounded-xl"
+                        >
+                          {endDate ? (
+                            <Text className="text-gray-100 text-sm">
+                              {endDate.toLocaleDateString()}
+                            </Text>
+                          ) : (
+                            <Text className="text-gray-400 text-sm">
+                              Select date
+                            </Text>
+                          )}
+
+                          <Ionicons
+                            name="calendar-clear-outline"
+                            size={15}
+                            className="text-gray-400"
+                          />
+                        </Pressable>
                       </View>
                     </View>
 
-                    <View>
+                    <View className="mb-2 mt-4 w-full">
                       <Pressable
-                        className="flex flex-1 px-6 py-3 bg-blue-900 rounded-2xl border border-blue-700"
+                        className="w-full px-6 py-3 bg-blue-900 rounded-2xl border border-blue-700"
                         style={{
                           boxShadow: "0px 2px 8px rgba(0,0,0,0.2)",
                         }}
@@ -231,6 +288,10 @@ const FilterModal = ({ isVisible, onClose }: FilterModalProps) => {
         </BlurView>
         {showStartDate && (
           <DatePicker value={currentDate} onChange={handleStartDate} />
+        )}
+
+        {showEndDate && (
+          <DatePicker value={currentDate} onChange={handleLastDate} />
         )}
       </SafeAreaView>
     </Modal>
