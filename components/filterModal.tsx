@@ -4,8 +4,10 @@ import { BlurView } from "expo-blur";
 import { styled } from "nativewind";
 import React, { useState } from "react";
 import { Modal, Pressable, Text, View } from "react-native";
+import { Calendar } from "react-native-calendars";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
+
 const SafeAreaView = styled(RNSafeAreaView);
 
 interface FilterModalProps {
@@ -41,6 +43,7 @@ const FilterModal = ({ isVisible, onClose }: FilterModalProps) => {
   const [frequency, setFrequency] = useState<Frequency>("Monthly");
   const [category, setCategory] = useState<Category>("Entertainment");
   const [status, setStatus] = useState<Status>("Active");
+  const [startDate, setStartDate] = useState("");
 
   return (
     <Modal
@@ -181,6 +184,38 @@ const FilterModal = ({ isVisible, onClose }: FilterModalProps) => {
 
                     <View>
                       <Text className="filter-modal-text">Date</Text>
+                      <View className="flex-row justify-between gap-4 ">
+                        <View>
+                          <Text>Start Date</Text>
+                          <Calendar
+                            // Handler which gets executed on day press
+                            onDayPress={(day) => {
+                              setStartDate(day.dateString);
+                              console.log("Selected day object:", day);
+                            }}
+                            // Mark the selected date on the calendar grid
+                            markedDates={{
+                              [startDate]: {
+                                selected: true,
+                                disableTouchEvent: true,
+                                selectedColor: "#00adf5",
+                              },
+                            }}
+                            // Customize structural UI properties
+                            theme={{
+                              todayTextColor: "#ff0000",
+                              arrowColor: "#00adf5",
+                              indicatorColor: "blue",
+                            }}
+                          />
+
+                          {startDate ? (
+                            <Text className="my-4 text-white">
+                              You chose: {startDate}
+                            </Text>
+                          ) : null}
+                        </View>
+                      </View>
                     </View>
 
                     <View>
