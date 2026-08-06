@@ -3,10 +3,11 @@ import clsx from "clsx";
 import { BlurView } from "expo-blur";
 import { styled } from "nativewind";
 import React, { useState } from "react";
-import { Modal, Pressable, Text, View } from "react-native";
-import { Calendar } from "react-native-calendars";
+import { Modal, Platform, Pressable, Text, View } from "react-native";
+
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
+import DatePicker from "./datePicker";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -43,7 +44,20 @@ const FilterModal = ({ isVisible, onClose }: FilterModalProps) => {
   const [frequency, setFrequency] = useState<Frequency>("Monthly");
   const [category, setCategory] = useState<Category>("Entertainment");
   const [status, setStatus] = useState<Status>("Active");
-  const [startDate, setStartDate] = useState("");
+  let setStartDate = "";
+  const [endDate, setEndDate] = useState(null);
+
+  const [showStartDate, setShowStartDate] = useState(false);
+
+  const currentDate = new Date();
+
+  const handleStartDate = (_event: unknown, selectedDate?: Date) => {
+    if (Platform.OS === "android") setShowStartDate(false);
+    if (selectedDate) {
+      const date = selectedDate.toDateString();
+      setStartDate = date;
+    }
+  };
 
   return (
     <Modal
@@ -187,33 +201,12 @@ const FilterModal = ({ isVisible, onClose }: FilterModalProps) => {
                       <View className="flex-row justify-between gap-4 ">
                         <View>
                           <Text>Start Date</Text>
-                          <Calendar
-                            // Handler which gets executed on day press
-                            onDayPress={(day) => {
-                              setStartDate(day.dateString);
-                              console.log("Selected day object:", day);
-                            }}
-                            // Mark the selected date on the calendar grid
-                            markedDates={{
-                              [startDate]: {
-                                selected: true,
-                                disableTouchEvent: true,
-                                selectedColor: "#00adf5",
-                              },
-                            }}
-                            // Customize structural UI properties
-                            theme={{
-                              todayTextColor: "#ff0000",
-                              arrowColor: "#00adf5",
-                              indicatorColor: "blue",
-                            }}
-                          />
 
-                          {startDate ? (
+                          {/* {startDate ? (
                             <Text className="my-4 text-white">
                               You chose: {startDate}
                             </Text>
-                          ) : null}
+                          ) : null} */}
                         </View>
                       </View>
                     </View>
@@ -236,6 +229,9 @@ const FilterModal = ({ isVisible, onClose }: FilterModalProps) => {
             </Pressable>
           </Pressable>
         </BlurView>
+        {showStartDate && (
+          <DatePicker value={currentDate} onChange={handleStartDate} />
+        )}
       </SafeAreaView>
     </Modal>
   );
