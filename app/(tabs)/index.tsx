@@ -73,6 +73,7 @@ export default function App() {
 
   return (
     <SafeAreaView className="flex-1 bg-background dark:bg-darkBackground p-5">
+      {/* Status bar */}
       <StatusBar />
 
       <FlatList
